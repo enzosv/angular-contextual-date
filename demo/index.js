@@ -39,9 +39,14 @@ function appCtrl (contextualDateService) {
 
         // dates in the future
         now = new Date();
+        vm.examples.push(now.setDate(now.getDate() + 1));
         vm.examples.push(now.setDate(now.getDate() + 2));
+        vm.examples.push(now.setDate(now.getDate() + 7));
         vm.examples.push(now.setMonth(now.getMonth() + 2));
         vm.examples.push(now.setFullYear(now.getFullYear() + 5));
+
+        
+        
 
         vm.config = contextualDateService.config;
     }

@@ -101,7 +101,9 @@ function contextualDateService ($filter, $document) {
                 thisYear: "MMM d",
                 historical: "MMM d, y",
 
-                nextMonth: "MMM d 'at' h:mm a",
+                tomorrow: "'Tomorrow at' h:mm a",
+                nextWeek: "EEE, MMM d",
+                nextMonth: "MMM d",
                 nextYear: "MMM d, y",
                 future: "MMM d, y"
             },
@@ -240,14 +242,28 @@ function contextualDateService ($filter, $document) {
         var isToday = (ldate.getDate() === now.getDate() &&
                                         ldate.getMonth() === now.getMonth() &&
                                         ldate.getFullYear() === now.getFullYear());
+
+        // tomorrow
+        var tomorrowThreshold = Math.round(thresholds.day * 1);
+        var tomorrow = new Date(nowTime);
+        tomorrow.setDate(tomorrow.getDate() + tomorrowThreshold);
+        var isTomorrow = (isFuture && tomorrow.getTime() - ldateTime >= 0);
         
+        // week
+        var weekThreshold = Math.round(thresholds.week * 7);
+        var nextWeek = new Date(nowTime);
+        nextWeek.setDate(nextWeek.getDate() + weekThreshold);
+        var isNextWeek = (isFuture && nextWeek.getTime() - ldateTime >= 0);
+
         // month
         var monthThreshold = Math.round(thresholds.month * 31);
         var thisMonth = new Date(nowTime);
         thisMonth.setDate(thisMonth.getDate() - monthThreshold);
         var nextMonth = new Date(nowTime);
         nextMonth.setDate(nextMonth.getDate() + monthThreshold);
+
         var isThisMonth = (!isFuture && ldateTime - thisMonth.getTime() >= 0);
+        
         var isNextMonth = (isFuture && nextMonth.getTime() - ldateTime >= 0);
 
         // year
@@ -265,6 +281,12 @@ function contextualDateService ($filter, $document) {
         if (isToday) {
             fullDate = $dateFilter(ldate, dateFormats.today, timezone);
         } 
+        else if (isTomorrow){
+            fullDate = $dateFilter(ldate, dateFormats.tomorrow, timezone);
+        } 
+        else if (isNextWeek){
+            fullDate = $dateFilter(ldate, dateFormats.nextWeek, timezone);
+        }
         else if (isThisMonth) {
             fullDate = $dateFilter(ldate, dateFormats.thisMonth, timezone);
         }
